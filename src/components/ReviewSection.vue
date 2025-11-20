@@ -14,7 +14,7 @@ const reviews = [
     id: 2,
     text: "Yummix selalu jadi pilihan utama kalau lagi buru-buru. Enak, cepet, dan varian menunya bikin gak bosen. Salut buat tim Yummix!",
     name: "Reno",
-    role: "Femboy iteka",
+    role: "Mahasiswa ITK",
     img: "https://i.pravatar.cc/150?img=5"
   },
   {
