@@ -4,11 +4,10 @@ import { RouterLink } from 'vue-router'
 import logoImg from '@/assets/logo-yummix.png'
 
 const navLinks = [
-  { name: 'HOME', path: '/', active: true },
-  { name: 'MENU', path: '#', active: false },
-  { name: 'ABOUT US', path: '#', active: false },
-  { name: 'REVIEW', path: '#', active: false },
-  { name: 'CONTACT', path: '#', active: false },
+  { name: 'HOME', path: '/' }, 
+  { name: 'MENU', path: '/menu' }, 
+  { name: 'ABOUT US', path: '/#about' }, 
+  { name: 'CONTACT', path: '/#contact' }, 
 ]
 
 const isMenuOpen = ref(false)
