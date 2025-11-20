@@ -1,5 +1,4 @@
 <script setup>
-// Pastikan file gambar hero sudah ada di src/assets/Hero.jpg
 import heroImage from '@/assets/Hero.png'
 </script>
 

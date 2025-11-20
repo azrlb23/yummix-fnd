@@ -1,5 +1,4 @@
 <script setup>
-// Ganti 'about-image.jpg' dengan nama file gambar Anda yang sebenarnya
 import aboutImage from '@/assets/about-image.png' 
 </script>
 

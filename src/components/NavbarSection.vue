@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-// Pastikan file logo sudah ada di src/assets/logo-yummix.png
 import logoImg from '@/assets/logo-yummix.png'
 
 const navLinks = [
