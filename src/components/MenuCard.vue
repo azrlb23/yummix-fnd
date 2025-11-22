@@ -1,8 +1,7 @@
 <script setup>
 import { defineProps } from 'vue'
-import { useCartStore } from '@/stores/cart' // 1. Import Store Pinia
+import { useCartStore } from '@/stores/cart'
 
-// Menerima data item dari MenuView
 const props = defineProps({
   item: {
     type: Object,
@@ -10,12 +9,16 @@ const props = defineProps({
   }
 })
 
-// 2. Inisialisasi Store
 const cartStore = useCartStore()
 
-// 3. Fungsi Tambah ke Keranjang
+// Fungsi Tambah
 const addToCart = () => {
   cartStore.addItem(props.item)
+}
+
+// Fungsi Kurang (Baru)
+const removeFromCart = () => {
+  cartStore.decreaseItem(props.item.id)
 }
 </script>
 
@@ -37,7 +40,10 @@ const addToCart = () => {
       
       <div class="flex justify-center gap-4">
         
-        <button class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center hover:bg-white hover:text-[#D94436] transition-colors cursor-pointer">
+        <button 
+          @click="removeFromCart"
+          class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center hover:bg-white hover:text-[#D94436] transition-colors cursor-pointer active:scale-90"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
           </svg>
@@ -54,13 +60,9 @@ const addToCart = () => {
 
       </div>
     </div>
-
   </div>
 </template>
 
 <style scoped>
-/* Style ini penting agar gambar yang 'floating' tidak terpotong */
-.menu-card {
-  overflow: visible; 
-}
+.menu-card { overflow: visible; }
 </style>
