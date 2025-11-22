@@ -1,30 +1,30 @@
 <script setup>
 import { ref, computed } from 'vue'
-// Import Swiper Vue.js components
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Pagination, Navigation, EffectCoverflow } from 'swiper/modules'
+import { useCartStore } from '@/stores/cart' // Import Store
 
-// Import Swiper styles
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import 'swiper/css/effect-coverflow'
 
-// Import Components
 import NavbarSection from '@/components/NavbarSection.vue'
 import FooterSection from '@/components/FooterSection.vue'
+import MenuCard from '@/components/MenuCard.vue'
 
-// Import Images
+// Import Gambar
 import noodlesImg from '@/assets/Noodles.png'
 import kebabImg from '@/assets/Kebab.png'
 import toastImg from '@/assets/Toast.png'
 import squashImg from '@/assets/Squash.png'
 import nonCoffeeImg from '@/assets/Non-Coffee.png'
 
-// --- STATE & DATA ---
+const cartStore = useCartStore() // Inisialisasi Store
 const activeCategory = ref('FOOD')
 const activeSubFilter = ref('ALL')
 
+// DATA MENU (TETAP SAMA)
 const menuItems = {
   FOOD: [
     { id: 1, name: 'Spicy Noodles', price: 'RP 15.000', type: 'NOODLES', img: noodlesImg },
@@ -42,7 +42,6 @@ const menuItems = {
   ]
 }
 
-// --- COMPUTED ---
 const currentItems = computed(() => menuItems[activeCategory.value])
 
 const subCategories = computed(() => {
@@ -55,7 +54,6 @@ const filteredCarouselItems = computed(() => {
   return currentItems.value.filter(item => item.type === activeSubFilter.value)
 })
 
-// --- SWIPER MODULES ---
 const modules = [Pagination, Navigation, EffectCoverflow]
 
 const setCategory = (cat) => {
@@ -70,24 +68,25 @@ const setCategory = (cat) => {
 
     <main class="flex-grow flex flex-col items-center justify-center py-10 relative overflow-hidden">
       
-      <!-- 1. SUB-CATEGORY TABS -->
-      <div class="flex flex-wrap justify-center gap-4 mb-8 relative z-10 px-4">
-        <button 
-          v-for="sub in subCategories" 
-          :key="sub"
-          @click="activeSubFilter = sub"
-          class="px-6 py-2 rounded-full font-market text-sm tracking-wider uppercase transition-all border-2"
-          :class="activeSubFilter === sub 
-            ? 'bg-[#C62E2E] text-white border-[#C62E2E]' 
-            : 'bg-transparent text-[#C62E2E] border-[#C62E2E] hover:bg-[#C62E2E]/10'"
-        >
-          {{ sub }}
-        </button>
+      <div class="mb-12 relative z-10 px-4">
+        <div class="bg-[#C62E2E] p-1.5 rounded-full inline-flex items-center shadow-inner gap-1 flex-wrap justify-center min-w-[300px]">
+          <button 
+            v-for="sub in subCategories" 
+            :key="sub"
+            @click="activeSubFilter = sub"
+            class="px-6 py-2 rounded-full font-market text-sm tracking-wider uppercase transition-all duration-300"
+            :class="activeSubFilter === sub 
+              ? 'bg-white text-[#C62E2E] shadow-md' 
+              : 'bg-transparent text-white hover:bg-white/20'"
+          >
+            {{ sub }}
+          </button>
+        </div>
       </div>
 
-      <!-- 2. SWIPER CAROUSEL (Implemented based on your HTML structure) -->
       <div class="w-full relative px-4 md:px-0 max-w-[1200px]">
         <swiper
+          :loop="true"
           :effect="'coverflow'"
           :grabCursor="true"
           :centeredSlides="true"
@@ -109,72 +108,45 @@ const setCategory = (cat) => {
             :key="item.id"
             class="max-w-[300px] sm:max-w-[350px]"
           >
-            <!-- CARD CONTENT -->
-            <div class="bg-[#D94436] rounded-[2.5rem] h-[320px] w-full relative flex flex-col justify-end pb-8 shadow-xl transition-transform duration-500 menu-card">
-              
-              <!-- Image Floating -->
-              <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-56 h-56 transition-all duration-500 z-20">
-                <img :src="item.img" :alt="item.name" class="w-full h-full object-contain drop-shadow-2xl filter contrast-110">
-              </div>
-
-              <!-- Text Content -->
-              <div class="text-center text-white px-6 z-10">
-                <h3 class="font-potta text-2xl tracking-wide mb-1">{{ item.name }}</h3>
-                <p class="font-market text-xs tracking-widest opacity-90 uppercase mb-3">{{ item.type }}</p>
-                <p class="font-market text-xl mb-6">{{ item.price }}</p>
-                
-                <!-- Action Buttons -->
-                <div class="flex justify-center gap-4">
-                  <button class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center hover:bg-white hover:text-[#D94436] transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" /></svg>
-                  </button>
-                  <button class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center hover:bg-white hover:text-[#D94436] transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                  </button>
-                </div>
-              </div>
-
-            </div>
+             <MenuCard :item="item" />
           </swiper-slide>
         </swiper>
-        
-        <!-- Custom Pagination Styling handled by CSS below -->
       </div>
 
-      <!-- 3. BOTTOM CONTROLS -->
-      <div class="mt-8 flex flex-col items-center gap-8 relative z-10">
-        <!-- Toggle -->
-        <div class="bg-[#C62E2E] p-1.5 rounded-full flex shadow-lg">
+      <div class="mt-8 flex flex-col items-center gap-6 relative z-10">
+        
+        <div class="bg-[#C62E2E] p-1 rounded-full flex items-center relative w-[240px] h-[50px] shadow-inner">
           <button 
             @click="setCategory('FOOD')"
-            class="px-8 py-2.5 rounded-full font-market tracking-widest transition-all text-sm md:text-base"
-            :class="activeCategory === 'FOOD' ? 'bg-white text-[#C62E2E]' : 'text-white hover:bg-white/20'"
+            class="flex-1 h-full rounded-full font-market text-base tracking-widest transition-all duration-300 z-10"
+            :class="activeCategory === 'FOOD' 
+              ? 'bg-white text-[#C62E2E] shadow-md' 
+              : 'text-white hover:text-white/80'"
           >
             FOOD
           </button>
           <button 
             @click="setCategory('DRINKS')"
-            class="px-8 py-2.5 rounded-full font-market tracking-widest transition-all text-sm md:text-base"
-            :class="activeCategory === 'DRINKS' ? 'bg-white text-[#C62E2E]' : 'text-white hover:bg-white/20'"
+            class="flex-1 h-full rounded-full font-market text-base tracking-widest transition-all duration-300 z-10"
+            :class="activeCategory === 'DRINKS' 
+              ? 'bg-white text-[#C62E2E] shadow-md' 
+              : 'text-white hover:text-white/80'"
           >
             DRINKS
           </button>
         </div>
 
-        <!-- Order Btn -->
-        <div class="flex items-center gap-6">
-          <button class="text-[#C62E2E] hover:scale-110 transition-transform">
-             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="size-9">
-               <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-             </svg>
-          </button>
-          <button class="bg-[#C62E2E] text-white px-10 py-3.5 rounded-full font-market text-lg tracking-widest shadow-lg hover:bg-[#9E2222] transition-colors hover:-translate-y-1">
+        <div>
+          <button 
+            @click="cartStore.isCheckoutOpen = true"
+            class="bg-[#C62E2E] text-white px-10 py-3 rounded-full font-market text-lg tracking-widest shadow-lg hover:bg-[#9E2222] transition-transform hover:-translate-y-1 active:scale-95"
+          >
             ORDER NOW
           </button>
         </div>
+
       </div>
 
-      <!-- Background Decor -->
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[70%] bg-gradient-to-b from-[#FFF6E0] to-[#FFE0B2]/40 rounded-full blur-3xl -z-0 pointer-events-none"></div>
 
     </main>
@@ -184,32 +156,28 @@ const setCategory = (cat) => {
 </template>
 
 <style scoped>
-/* Konfigurasi Swiper Slide */
 .swiper {
   width: 100%;
   padding-top: 50px;
   padding-bottom: 50px;
-  overflow: visible; /* Agar bayangan/gambar yang keluar tidak terpotong */
+  overflow: visible;
 }
 
 .swiper-slide {
   background-position: center;
   background-size: cover;
   width: 320px;
-  /* Efek Blur/Opacity untuk item yang tidak aktif */
   opacity: 0.5;
   transition: all 0.3s ease;
-  transform: scale(0.85); /* Mengecil jika tidak aktif */
+  transform: scale(0.85);
 }
 
-/* Item yang AKTIF (Tengah) */
 .swiper-slide-active {
   opacity: 1;
-  transform: scale(1.05); /* Sedikit membesar */
+  transform: scale(1.05);
   z-index: 10;
 }
 
-/* Modifikasi Pagination Dots Swiper */
 :deep(.swiper-pagination-bullet) {
   background: #C62E2E;
   opacity: 0.3;
@@ -221,10 +189,5 @@ const setCategory = (cat) => {
   opacity: 1;
   width: 12px;
   height: 12px;
-}
-
-/* Agar gambar bisa 'nongol' keluar dari kartu */
-.menu-card {
-  overflow: visible;
 }
 </style>

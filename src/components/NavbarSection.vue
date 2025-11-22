@@ -3,11 +3,11 @@ import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import logoImg from '@/assets/logo-yummix.png'
 import { useCartStore } from '@/stores/cart'
-import CheckoutModal from '@/components/CheckoutModal.vue' // 1. Import Modal
+import CheckoutModal from '@/components/CheckoutModal.vue'
 
 const cartStore = useCartStore()
 const isMenuOpen = ref(false)
-const isCheckoutOpen = ref(false) // 2. State Modal
+// HAPUS state lokal isCheckoutOpen, kita pakai cartStore.isCheckoutOpen
 
 const navLinks = [
   { name: 'HOME', path: '/' }, 
@@ -41,7 +41,7 @@ const navLinks = [
     <div class="hidden md:flex items-center gap-6">
       
       <button 
-        @click="isCheckoutOpen = true"
+        @click="cartStore.isCheckoutOpen = true"
         class="relative text-[#BF360C] hover:scale-110 transition-transform"
       >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="size-8">
@@ -74,8 +74,8 @@ const navLinks = [
     </div>
 
     <CheckoutModal 
-      :is-open="isCheckoutOpen" 
-      @close="isCheckoutOpen = false" 
+      :is-open="cartStore.isCheckoutOpen" 
+      @close="cartStore.isCheckoutOpen = false" 
     />
 
   </nav>
