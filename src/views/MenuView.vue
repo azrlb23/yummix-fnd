@@ -1,23 +1,19 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useCartStore } from '@/stores/cart'
-import { useMenuStore } from '@/stores/menu' // Import Menu Store
+import { useMenuStore } from '@/stores/menu'
 
-// Import Components
 import SubCategoryFilter from '@/components/menu/SubCategoryFilter.vue'
 import MenuCarousel from '@/components/menu/MenuCarousel.vue'
 import CategoryToggle from '@/components/menu/CategoryToggle.vue'
 
 const cartStore = useCartStore()
-const menuStore = useMenuStore() // Gunakan Menu Store
+const menuStore = useMenuStore() 
 
-// State
 const activeCategory = ref('FOOD')
 const activeSubFilter = ref('ALL')
 
-// Logic Data (Sekarang mengambil dari Store)
 const currentItems = computed(() => {
-  // Filter item dari store berdasarkan kategori aktif (FOOD/DRINKS)
   return menuStore.items.filter(item => item.category === activeCategory.value)
 })
 

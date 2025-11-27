@@ -3,7 +3,6 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useMenuStore } from '@/stores/menu'
 
-// Import Components
 import ProductShowcase from '@/components/menu/detail/ProductShowcase.vue'
 import ProductInfo from '@/components/menu/detail/ProductInfo.vue'
 
@@ -14,10 +13,9 @@ const menuStore = useMenuStore()
 // Ambil ID dari URL
 const itemId = route.params.id
 
-// Cari item di store (Computed agar reaktif jika data store berubah)
+// Cari item di store
 const item = computed(() => menuStore.getItemById(itemId))
 
-// Fungsi fallback jika item tidak ketemu
 const goBack = () => router.push('/menu')
 </script>
 

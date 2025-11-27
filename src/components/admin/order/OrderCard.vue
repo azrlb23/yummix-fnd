@@ -14,12 +14,10 @@ const props = defineProps({
 
 const emit = defineEmits(['toggle', 'update-status'])
 
-// Format Rupiah
 const formatRupiah = (val) => {
   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val).replace('IDR', 'RP')
 }
 
-// DEFINISI CLASS BUTTON (Pindah kesini agar Responsivitas 'md:' terbaca oleh Tailwind)
 const btnBaseClass = "px-4 py-2 rounded-lg text-[10px] md:text-xs font-bold transition-colors text-center uppercase tracking-wider"
 </script>
 
@@ -122,7 +120,6 @@ const btnBaseClass = "px-4 py-2 rounded-lg text-[10px] md:text-xs font-bold tran
 </template>
 
 <style scoped>
-/* Hapus .btn-action dari sini untuk menghindari error @apply */
 
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out;

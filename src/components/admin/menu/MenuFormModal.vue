@@ -3,12 +3,11 @@ import { ref, watch, computed } from 'vue'
 
 const props = defineProps({
   isOpen: Boolean,
-  editItem: Object // Data menu yang akan diedit (null jika Tambah Baru)
+  editItem: Object 
 })
 
 const emit = defineEmits(['close', 'save'])
 
-// State Lokal Form (Agar tidak mengubah data asli sebelum save)
 const formData = ref({
   id: null,
   name: '',
@@ -16,17 +15,14 @@ const formData = ref({
   category: 'FOOD',
   type: '',
   status: 'Tersedia',
-  img: 'https://placehold.co/150' // Default placeholder
+  img: 'https://placehold.co/150'
 })
 
-// Reset/Isi form saat modal dibuka
 watch(() => props.isOpen, (newVal) => {
   if (newVal) {
     if (props.editItem) {
-      // Mode Edit: Clone data agar reaktif terpisah
       formData.value = { ...props.editItem }
     } else {
-      // Mode Tambah: Reset form
       formData.value = { 
         id: null, 
         name: '', 
@@ -43,7 +39,6 @@ watch(() => props.isOpen, (newVal) => {
 const isEditing = computed(() => !!props.editItem)
 
 const handleSubmit = () => {
-  // Emit data yang sudah diisi ke parent
   emit('save', { ...formData.value }) 
 }
 </script>

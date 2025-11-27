@@ -24,12 +24,12 @@ const toastStore = useToastStore()
 <style scoped>
 .toast-enter-active,
 .toast-leave-active {
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Efek membal */
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .toast-enter-from,
 .toast-leave-to {
-  transform: translate(-50%, -20px); /* Muncul dari atas */
+  transform: translate(-50%, -20px);
   opacity: 0;
 }
 </style>

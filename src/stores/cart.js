@@ -4,17 +4,14 @@ import { ref, computed } from 'vue'
 export const useCartStore = defineStore('cart', () => {
   const items = ref([])
   
-  // State untuk mengontrol Modal Checkout
   const isCheckoutOpen = ref(false)
 
   const totalItems = computed(() => {
     return items.value.reduce((total, item) => total + item.quantity, 0)
   })
 
-  // PERBAIKAN DISINI: Menghapus logika parsing string karena data harga sekarang sudah Number
   const subtotalPrice = computed(() => {
     return items.value.reduce((total, item) => {
-      // Pastikan harga valid, jika tidak default ke 0
       const price = Number(item.price) || 0
       return total + (price * item.quantity)
     }, 0)
@@ -26,7 +23,6 @@ export const useCartStore = defineStore('cart', () => {
     if (existingItem) {
       existingItem.quantity++
     } else {
-      // Menambahkan item baru dengan default quantity 1 dan note kosong
       items.value.push({ ...product, quantity: 1, note: '' })
     }
   }

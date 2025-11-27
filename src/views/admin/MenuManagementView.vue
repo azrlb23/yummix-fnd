@@ -2,36 +2,30 @@
 import { ref, computed } from 'vue'
 import { useMenuStore } from '@/stores/menu'
 
-// Import Components
 import MenuTable from '@/components/admin/menu/MenuTable.vue'
 import MenuFormModal from '@/components/admin/menu/MenuFormModal.vue'
 
 const menuStore = useMenuStore()
 
-// State Halaman
 const showModal = ref(false)
 const editingItem = ref(null)
 const filterCategory = ref('ALL')
 
-// Filter Logic
 const filteredItems = computed(() => {
   if (filterCategory.value === 'ALL') return menuStore.items
   return menuStore.items.filter(i => i.category === filterCategory.value)
 })
 
-// Handler: Buka Modal Tambah
 const openAddModal = () => {
-  editingItem.value = null // Null artinya mode tambah
+  editingItem.value = null 
   showModal.value = true
 }
 
-// Handler: Buka Modal Edit
 const openEditModal = (item) => {
-  editingItem.value = item // Isi dengan data yang mau diedit
+  editingItem.value = item 
   showModal.value = true
 }
 
-// Handler: Simpan Data (Dari emit 'save' di modal)
 const handleSave = (formData) => {
   if (formData.id) {
     menuStore.updateMenu(formData)
@@ -41,7 +35,6 @@ const handleSave = (formData) => {
   showModal.value = false
 }
 
-// Handler: Hapus Data (Dari emit 'delete' di table)
 const handleDelete = (id) => {
   if(confirm('Yakin ingin menghapus menu ini?')) {
     menuStore.deleteMenu(id)

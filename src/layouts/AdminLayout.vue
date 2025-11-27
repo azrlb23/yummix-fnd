@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { RouterView } from 'vue-router'
 import AdminSidebar from '@/components/admin/AdminSidebar.vue'
-import AdminHeader from '@/components/admin/AdminHeader.vue' // Import Header Baru
+import AdminHeader from '@/components/admin/AdminHeader.vue'
 
 const isSidebarOpen = ref(false)
 </script>

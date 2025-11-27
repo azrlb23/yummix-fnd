@@ -8,7 +8,6 @@ const props = defineProps({
   }
 })
 
-// Logic warna dipindah kesini agar reusable
 const badgeClass = computed(() => {
   switch (props.status) {
     case 'Pending': return 'bg-yellow-100 text-yellow-700 border-yellow-200'

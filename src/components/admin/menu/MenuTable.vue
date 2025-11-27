@@ -12,7 +12,7 @@ defineProps({
 // Emits: Memberi tahu parent jika ada aksi
 const emit = defineEmits(['edit', 'delete'])
 
-const menuStore = useMenuStore() // Hanya untuk helper formatPrice
+const menuStore = useMenuStore() 
 </script>
 
 <template>

@@ -25,7 +25,6 @@ const navLinks = [
   { name: 'CONTACT', path: '/#contact' }, 
 ]
 
-// Fungsi menutup sidebar saat link diklik
 const closeMenu = () => {
   isMenuOpen.value = false
 }
@@ -145,7 +144,6 @@ const closeMenu = () => {
 </template>
 
 <style scoped>
-/* Animasi Fade untuk Backdrop */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
@@ -155,13 +153,12 @@ const closeMenu = () => {
   opacity: 0;
 }
 
-/* Animasi Slide untuk Sidebar */
 .slide-right-enter-active,
 .slide-right-leave-active {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .slide-right-enter-from,
 .slide-right-leave-to {
-  transform: translateX(100%); /* Geser ke kanan luar layar */
+  transform: translateX(100%);
 }
 </style>

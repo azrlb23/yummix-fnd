@@ -6,15 +6,12 @@ import OrderCard from '@/components/admin/order/OrderCard.vue'
 const orderStore = useOrderStore()
 const activeOrderId = ref(null)
 
-// Logic Toggle Accordion (Hanya satu yang terbuka)
 const toggleDetail = (id) => {
   activeOrderId.value = activeOrderId.value === id ? null : id
 }
 
-// Logic Update Status
 const handleStatusUpdate = (id, newStatus) => {
   orderStore.updateStatus(id, newStatus)
-  // Opsional: Tutup detail setelah update status selesai
   if (['Completed', 'Cancelled'].includes(newStatus)) {
     activeOrderId.value = null
   }

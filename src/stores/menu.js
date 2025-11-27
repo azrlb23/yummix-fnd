@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-// Import gambar
 import noodlesImg from '@/assets/Noodles.png'
 import kebabImg from '@/assets/Kebab.png'
 import toastImg from '@/assets/Toast.png'
@@ -9,9 +8,7 @@ import squashImg from '@/assets/Squash.png'
 import nonCoffeeImg from '@/assets/Non-Coffee.png'
 
 export const useMenuStore = defineStore('menu', () => {
-  // State: Data Menu Lengkap
   const items = ref([
-    // FOOD
     { 
       id: 1, 
       name: 'Spicy Noodles', 
@@ -72,8 +69,6 @@ export const useMenuStore = defineStore('menu', () => {
       calories: '310 kkal',
       rating: 4.8
     },
-
-    // DRINKS
     { 
       id: 6, 
       name: 'Lemon Squash', 
@@ -136,7 +131,6 @@ export const useMenuStore = defineStore('menu', () => {
     },
   ])
 
-  // Actions
   function addMenu(newItem) {
     const newId = items.value.length > 0 ? Math.max(...items.value.map(i => i.id)) + 1 : 1
     items.value.push({ ...newItem, id: newId })
@@ -155,7 +149,6 @@ export const useMenuStore = defineStore('menu', () => {
     return items.value.find(i => i.id === parseInt(id))
   }
 
-  // Helper: Format Rupiah
   function formatPrice(value) {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value)
   }

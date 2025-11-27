@@ -2,7 +2,6 @@
 import StatCard from '@/components/admin/dashboard/StatCard.vue'
 import SalesChart from '@/components/admin/dashboard/SalesChart.vue'
 
-// Data Dummy Ringkasan
 const stats = [
   { label: 'Total Pesanan', value: '125', icon: '📦' },
   { label: 'Pendapatan Hari Ini', value: 'Rp 1.500.000', icon: '💰' },

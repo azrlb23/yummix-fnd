@@ -6,7 +6,6 @@ defineProps({
   isOpen: Boolean
 })
 
-// Mengirim event ke parent (Layout) untuk menutup sidebar
 const emit = defineEmits(['close'])
 
 const adminLinks = [

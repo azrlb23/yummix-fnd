@@ -1,7 +1,7 @@
 <script setup>
 import { defineProps, computed } from 'vue'
 import { useCartStore } from '@/stores/cart'
-import { useMenuStore } from '@/stores/menu' // Import menu store untuk format harga
+import { useMenuStore } from '@/stores/menu'
 import { useToastStore } from '@/stores/toast'
 
 const props = defineProps({
@@ -9,7 +9,7 @@ const props = defineProps({
 })
 
 const cartStore = useCartStore()
-const menuStore = useMenuStore() // Instance menu store
+const menuStore = useMenuStore() 
 const toastStore = useToastStore()
 
 const itemQuantity = computed(() => {

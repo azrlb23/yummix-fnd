@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useOrderStore = defineStore('order', () => {
-  // State: Daftar Pesanan (Dummy Data Awal)
   const orders = ref([
     {
       id: 'ORD-001',
@@ -12,7 +11,7 @@ export const useOrderStore = defineStore('order', () => {
         { name: 'Lemon Squash', quantity: 2, price: 10000, note: '' }
       ],
       total: 52000,
-      status: 'Selesai', // Pending, Cooking, Ready, Completed, Cancelled
+      status: 'Selesai', 
       date: new Date().toLocaleString()
     },
     {
@@ -27,22 +26,19 @@ export const useOrderStore = defineStore('order', () => {
     }
   ])
 
-  // Action: Buat Pesanan Baru (Dipanggil dari Checkout)
   function createOrder(cartItems, totalAmount) {
     const newOrder = {
-      id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`, // Generate ID Acak
-      customerName: `Guest ${Math.floor(Math.random() * 100)}`, // Simulasi Nama
-      items: [...cartItems], // Copy array agar tidak reaktif ke cart lama
+      id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`, 
+      customerName: `Guest ${Math.floor(Math.random() * 100)}`, 
+      items: [...cartItems], 
       total: totalAmount,
       status: 'Pending',
       date: new Date().toLocaleString()
     }
-    
-    // Masukkan ke paling atas (terbaru)
+
     orders.value.unshift(newOrder)
   }
 
-  // Action: Update Status Pesanan (Dipanggil Admin)
   function updateStatus(orderId, newStatus) {
     const order = orders.value.find(o => o.id === orderId)
     if (order) {
@@ -50,7 +46,6 @@ export const useOrderStore = defineStore('order', () => {
     }
   }
 
-  // Helper: Warna Badge Status
   function getStatusColor(status) {
     switch (status) {
       case 'Pending': return 'bg-yellow-100 text-yellow-700 border-yellow-200'
