@@ -10,7 +10,7 @@ const showReviewModal = ref(false)
     <div class="max-w-7xl mx-auto w-full grid md:grid-cols-2 gap-10 md:gap-12 items-center">
       
       <div v-animate class="relative flex justify-center md:justify-start order-1 md:order-1">
-        <div class="w-[250px] h-[250px] md:w-[400px] md:h-[400px] rounded-full overflow-hidden border-[6px] border-white/50 shadow-xl">
+        <div class="w-[250px] h-[250px] md:w-[400px] md:h-[400px] rounded-full">
           <img :src="aboutImage" alt="About Yummix" class="w-full h-full object-cover" />
         </div>
         <div class="absolute -bottom-4 -left-4 w-16 h-16 md:w-24 md:h-24 bg-[#FFB300] rounded-full -z-10 opacity-50 blur-xl"></div>
@@ -33,7 +33,7 @@ const showReviewModal = ref(false)
           </div>
           <div class="flex items-center gap-2 md:gap-3 justify-start">
              <span class="w-3 h-3 md:w-4 md:h-4 rounded-full bg-[#BF360C]"></span>
-             <span class="font-market text-[#3E2723] text-xs md:text-sm tracking-widest text-left">HARGA BERSAHABAT</span>
+             <span class="font-market text-[#3E2723] text-xs md:text-sm tracking-widest text-left ">HARGA BERSAHABAT</span>
           </div>
           <div class="flex items-center gap-2 md:gap-3 justify-start">
              <span class="w-3 h-3 md:w-4 md:h-4 rounded-full bg-[#BF360C]"></span>
@@ -47,8 +47,7 @@ const showReviewModal = ref(false)
 
         <button 
           @click="showReviewModal = true"
-          v-animate
-          class="bg-[#BF360C] text-white px-8 py-2.5 md:px-10 md:py-3 rounded-full font-market text-sm md:text-lg shadow-lg hover:bg-[#9E2B09] transition-all delay-700"
+          class="bg-[#BF360C] text-white px-9 py-3 md:px-8 md:py-3.5 rounded-full font-bold text-xs md:text-sm shadow-lg hover:bg-[#9E2B09] transition-all duration-300 active:scale-95"
         >
           REVIEW
         </button>

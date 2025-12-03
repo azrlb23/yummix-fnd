@@ -17,13 +17,7 @@ const chunkedReviews = computed(() => {
   return result
 })
 
-const scrollToSlide = (index) => {
-  const targetId = `slide-${index}`
-  const element = document.getElementById(targetId)
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
-  }
-}
+
 </script>
 
 <template>

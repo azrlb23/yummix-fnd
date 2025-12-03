@@ -57,9 +57,6 @@ const addToCart = () => {
       >
         ADD TO CART
       </button>
-      <button class="w-14 h-14 rounded-full border-2 border-[#C62E2E] flex items-center justify-center text-[#C62E2E] hover:bg-[#C62E2E] hover:text-white transition-colors">
-        ♥
-      </button>
     </div>
 
   </div>

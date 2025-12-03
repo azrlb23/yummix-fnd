@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue'
-const props = defineProps({ isOpen: Boolean })
 const emit = defineEmits(['close'])
 const isSuccess = ref(false)
 const sendReview = () => isSuccess.value = true
