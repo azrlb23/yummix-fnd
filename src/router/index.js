@@ -2,8 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import CustomerLayout from '@/layouts/CustomerLayout.vue'
 import AdminLayout from '@/layouts/AdminLayout.vue'
+import AboutLayout from '@/layouts/AboutLayout.vue'
 import HomeView from '../views/HomeView.vue'
 import MenuView from '../views/MenuView.vue'
+import AboutMe from '../views/AboutMeView.vue'
 import MenuDetailView from '../views/MenuDetailView.vue'
 import AdminDashboard from '@/views/admin/DashboardView.vue'
 import MenuManagementView from '@/views/admin/MenuManagementView.vue'
@@ -19,8 +21,16 @@ const router = createRouter({
         { path: '', name: 'home', component: HomeView },
         { path: 'menu', name: 'menu', component: MenuView },
         { path: 'menu/:id', name: 'menu-detail',component: MenuDetailView }
+        
       ]
     },
+
+    {
+      path: '/about',
+      name: AboutMe,
+      component: AboutLayout,
+    },
+
 
     {
       path: '/admin',

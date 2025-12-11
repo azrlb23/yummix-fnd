@@ -23,6 +23,7 @@ const navLinks = [
   { name: 'MENU', path: '/menu' }, 
   { name: 'ABOUT US', path: '/#about' }, 
   { name: 'CONTACT', path: '/#contact' }, 
+  { name: 'ABOUT ME', path: '/about' },
 ]
 
 const closeMenu = () => {

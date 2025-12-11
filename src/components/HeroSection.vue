@@ -12,11 +12,11 @@ const goToMenu = () => {
 }
 
 // Function for Search
-const handleSearch = () => {
-  // Navigate to menu with query parameter
-  // Example result: /menu?q=kebab
-  router.push({ path: '/menu', query: { q: searchQuery.value } })
-}
+// const handleSearch = () => {
+//   // Navigate to menu with query parameter
+//   // Example result: /menu?q=kebab
+//   router.push({ path: '/menu', query: { q: searchQuery.value } })
+// }
 </script>
 
 <template>
@@ -44,24 +44,24 @@ const handleSearch = () => {
           </button>
 
           <div class="relative group flex items-center">
-            <span class="absolute left-4 text-[#BF360C] z-10">
+            <!-- <span class="absolute left-4 text-[#BF360C] z-10">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
-            </span>
+            </span> -->
             
-            <input 
+            <!-- <input 
               v-model="searchQuery"
               @keyup.enter="handleSearch"
               type="text" 
               placeholder="Search..." 
               class="bg-[#D7CCC8]/50 text-[#3E2723] pl-10 pr-4 py-3 md:py-3.5 rounded-l-full font-bold text-xs md:text-sm focus:outline-none placeholder-[#3E2723]/50 w-32 md:w-48 transition-all"
-            />
+            /> -->
             
-            <button 
+            <!-- <button 
               @click="handleSearch"
               class="bg-[#D7CCC8] text-[#3E2723] px-4 py-3 md:py-3.5 rounded-r-full font-bold text-xs md:text-sm hover:bg-[#Cbb8b3] transition-colors uppercase"
             >
               GO
-            </button>
+            </button> -->
           </div>
 
         </div>
@@ -72,7 +72,7 @@ const handleSearch = () => {
         <img 
           :src="heroImage" 
           alt="Yummix Food" 
-          class="relative w-[280px] md:w-[400px] lg:w-[500px] object-contain drop-shadow-2xl z-10 animate-float"
+          class="relative w-[400px] md:w-[600px] lg:w-[500px] object-contain drop-shadow-2xl z-10 animate-float"
         />
       </div>
     </div>

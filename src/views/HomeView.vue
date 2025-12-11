@@ -5,7 +5,7 @@ import ReviewSection from '@/components/ReviewSection.vue'
 </script>
 
 <template>
-  <div>
+  <div class="w-full">
     <HeroSection />
     <AboutSection /> 
     <ReviewSection />

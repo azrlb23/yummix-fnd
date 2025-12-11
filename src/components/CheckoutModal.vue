@@ -1,12 +1,27 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useCartStore } from '@/stores/cart'
+import { useOrderStore } from '@/stores/order'
 
 const props = defineProps({ isOpen: Boolean })
 const emit = defineEmits(['close'])
 
 const cartStore = useCartStore()
-const step = ref(1)
+const orderStore = useOrderStore()
+const step = ref(1) // 1: Cart, 2: Payment, 3: Success
+
+// Data Metode Pembayaran
+const paymentMethods = [
+  { id: 'bca', name: 'BCA VIRTUAL ACCOUNT', va: '8800 1234 5678 9999', color: '#005EB8' },
+  { id: 'mandiri', name: 'MANDIRI VIRTUAL ACCOUNT', va: '8955 0812 3456 7890', color: '#FFB700' },
+  { id: 'gopay', name: 'GOPAY / QRIS', va: '0812 3456 7890', color: '#00AED6' },
+  { id: 'ovo', name: 'OVO', va: '0812 3456 7890', color: '#4C3494' }
+]
+
+// State untuk Pembayaran
+const selectedPayment = ref(paymentMethods[0]) // Default BCA
+const isDropdownOpen = ref(false)
+
 const fee = 2000
 
 const formatRupiah = (val) => {
@@ -15,29 +30,50 @@ const formatRupiah = (val) => {
 
 const totalPrice = computed(() => cartStore.subtotalPrice + fee)
 
+// URL QR Code Dinamis (Menggunakan API publik untuk demo visual)
+const qrCodeUrl = computed(() => {
+  // Membuat QR code berdasarkan VA dan Total Harga agar unik
+  const data = `${selectedPayment.value.name}-${selectedPayment.value.va}-${totalPrice.value}`
+  return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(data)}`
+})
+
 const toPayment = () => {
   if (cartStore.items.length > 0) step.value = 2
 }
 
+const selectPayment = (method) => {
+  selectedPayment.value = method
+  isDropdownOpen.value = false
+}
+
 const doPayment = () => {
+  // Kirim data lengkap ke history pesanan
+  // Kita bisa menambahkan info payment method ke order store jika perlu
+  orderStore.createOrder(cartStore.items, totalPrice.value)
+  
   step.value = 3
   setTimeout(() => cartStore.clearCart(), 500)
 }
 
 const close = () => {
   emit('close')
-  setTimeout(() => step.value = 1, 300)
+  setTimeout(() => {
+    step.value = 1
+    isDropdownOpen.value = false
+  }, 300)
 }
 </script>
 
 <template>
   <Teleport to="body">
     <Transition name="modal">
+      
       <div 
         v-if="isOpen" 
         class="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 transition-opacity" 
         @click.self="close"
       >
+        
         <div class="modal-card w-[95%] md:w-full max-w-5xl bg-[#FFF8E7] rounded-2xl overflow-hidden shadow-2xl flex flex-col relative h-auto max-h-[90vh]">
           
           <div class="bg-[#C62E2E] px-4 py-4 md:px-8 md:py-5 flex justify-between items-center text-white shrink-0">
@@ -86,14 +122,9 @@ const close = () => {
                        <button @click="cartStore.decreaseItem(item.id)" class="w-6 h-6 md:w-8 md:h-8 bg-[#3E2723] text-white rounded md:rounded-md font-bold hover:bg-black flex items-center justify-center text-sm md:text-lg">-</button>
                     </div>
                   </div>
-
+                  
                   <div class="w-full relative">
-                    <input 
-                      v-model="item.note"
-                      type="text" 
-                      placeholder="Catatan (Pedas, Tanpa Sayur)..." 
-                      class="w-full bg-white border border-[#3E2723]/10 rounded-lg px-3 py-2 text-xs font-market text-[#3E2723] placeholder-[#3E2723]/40 focus:outline-none focus:border-[#C62E2E] transition-all"
-                    >
+                    <input v-model="item.note" type="text" placeholder="Catatan (Pedas, Tanpa Sayur)..." class="w-full bg-white border border-[#3E2723]/10 rounded-lg px-3 py-2 text-xs font-market text-[#3E2723] placeholder-[#3E2723]/40 focus:outline-none focus:border-[#C62E2E] transition-all">
                   </div>
                 </div>
               </div>
@@ -104,46 +135,62 @@ const close = () => {
                    <div class="flex justify-between font-market text-[#5D4037]"><span>SUBTOTAL</span><span>{{ formatRupiah(cartStore.subtotalPrice) }}</span></div>
                    <div class="flex justify-between font-market text-[#5D4037]"><span>FEE</span><span>{{ formatRupiah(fee) }}</span></div>
                  </div>
-                 
                  <div class="flex justify-between font-potta text-[#3E2723] text-lg md:text-xl">
-                   <span>TOTAL</span>
-                   <span>{{ formatRupiah(totalPrice) }}</span>
+                   <span>TOTAL</span><span>{{ formatRupiah(totalPrice) }}</span>
                  </div>
-
-                 <button @click="toPayment" class="w-full bg-[#C62E2E] text-white font-market py-2.5 md:py-3 rounded-full shadow-lg hover:bg-[#9E2222] active:scale-95 transition-all mt-2 uppercase tracking-widest text-sm md:text-base">
-                   ORDER NOW
-                 </button>
+                 <button @click="toPayment" class="w-full bg-[#C62E2E] text-white font-market py-2.5 md:py-3 rounded-full shadow-lg hover:bg-[#9E2222] active:scale-95 transition-all mt-2 uppercase tracking-widest text-sm md:text-base">ORDER NOW</button>
               </div>
             </div>
 
             <div v-else-if="step === 2" class="flex flex-col items-center justify-center h-full py-4">
-              <div class="bg-[#F2F0E4] p-6 md:p-10 rounded-3xl shadow-lg flex flex-col md:flex-row gap-8 items-center w-full border border-[#3E2723]/10">
+              <div class="bg-[#F2F0E4] p-6 md:p-10 rounded-3xl shadow-lg flex flex-col md:flex-row gap-8 items-center w-full border border-[#3E2723]/10 animate-fade-up">
                 
-                <div class="w-48 h-48 md:w-64 md:h-64 bg-[#D1D5DB] rounded-2xl flex items-center justify-center text-[#3E2723] font-potta text-xl md:text-2xl tracking-widest shadow-inner shrink-0">
-                  BARCODE
+                <div class="w-48 h-48 md:w-64 md:h-64 bg-white rounded-2xl flex items-center justify-center shadow-inner shrink-0 overflow-hidden border-2 border-dashed border-gray-300 p-2">
+                  <img :src="qrCodeUrl" alt="QR Code Pembayaran" class="w-full h-full object-contain opacity-90">
                 </div>
 
                 <div class="flex-grow space-y-5 text-left w-full">
+                  
                   <div>
-                    <label class="font-market text-[#5D4037] text-[10px] md:text-xs uppercase tracking-widest ml-1">Virtual Account Number</label>
+                    <label class="font-market text-[#5D4037] text-[10px] md:text-xs uppercase tracking-widest ml-1">Virtual Account / Number</label>
                     <div class="bg-[#E5E7EB] px-3 py-2 md:px-4 md:py-3 rounded-xl text-[#3E2723] font-market tracking-widest flex justify-between items-center mt-1 text-sm md:text-base">
-                      <span class="truncate mr-2">8800 1234 5678 9999</span>
-                      <span class="text-[10px] bg-white px-2 py-1 rounded text-[#5D4037] border border-gray-300 cursor-pointer shrink-0">COPY</span>
+                      <span class="truncate mr-2 font-bold">{{ selectedPayment.va }}</span>
+                      <button class="text-[10px] bg-white px-2 py-1 rounded text-[#5D4037] border border-gray-300 cursor-pointer shrink-0 hover:bg-gray-50 active:scale-95">COPY</button>
                     </div>
                   </div>
 
-                  <div>
+                  <div class="relative">
                     <label class="font-market text-[#5D4037] text-[10px] md:text-xs uppercase tracking-widest ml-1">Payment Method</label>
-                    <div class="bg-[#E5E7EB] px-3 py-2 md:px-4 md:py-3 rounded-xl text-[#3E2723] font-market tracking-widest flex justify-between items-center mt-1 text-sm md:text-base">
-                      <span>VIRTUAL ACCOUNT</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
-                    </div>
+                    
+                    <button 
+                      @click="isDropdownOpen = !isDropdownOpen"
+                      class="w-full bg-[#E5E7EB] px-3 py-2 md:px-4 md:py-3 rounded-xl text-[#3E2723] font-market tracking-widest flex justify-between items-center mt-1 text-sm md:text-base hover:bg-[#dbeafe] transition-colors"
+                    >
+                      <span class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full" :style="{ backgroundColor: selectedPayment.color }"></span>
+                        {{ selectedPayment.name }}
+                      </span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 transition-transform duration-300" :class="isDropdownOpen ? 'rotate-180' : ''">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                      </svg>
+                    </button>
+
+                    <Transition name="fade">
+                      <ul v-if="isDropdownOpen" class="absolute top-full left-0 w-full bg-white rounded-xl shadow-xl border border-gray-100 mt-2 z-50 overflow-hidden">
+                        <li 
+                          v-for="method in paymentMethods" 
+                          :key="method.id"
+                          @click="selectPayment(method)"
+                          class="px-4 py-3 hover:bg-[#F2F0E4] cursor-pointer font-market text-sm md:text-base text-[#3E2723] flex items-center gap-2 border-b border-gray-50 last:border-0"
+                        >
+                          <span class="w-3 h-3 rounded-full" :style="{ backgroundColor: method.color }"></span>
+                          {{ method.name }}
+                        </li>
+                      </ul>
+                    </Transition>
                   </div>
 
-                  <div class="flex items-center justify-end gap-3 pt-2">
-                     <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#D1D5DB] flex items-center justify-center text-[8px] md:text-[10px] text-[#5D4037] font-bold text-center leading-tight">
-                       ACCOUNT
-                     </div>
+                  <div class="flex items-center justify-end gap-3 pt-2">                  
                      <button @click="doPayment" class="bg-[#C62E2E] text-white px-6 py-2 md:px-8 md:py-3 rounded-full font-market shadow-lg hover:bg-[#9E2222] active:scale-95 transition-all text-sm md:text-base">
                        Konfirmasi
                      </button>
@@ -157,7 +204,6 @@ const close = () => {
               <p class="font-market text-[#5D4037] text-xs md:text-sm tracking-widest uppercase max-w-xs md:max-w-md">
                 PESANAN ANDA AKAN SEGERA DIPROSES OLEH KAMI. TERIMA KASIH TELAH BERBELANJA DI YUMMIX.
               </p>
-              <div class="w-4 h-4 bg-[#D1D5DB] rounded-full"></div>
               <button @click="close" class="bg-[#C62E2E] text-white px-10 py-2.5 md:px-12 md:py-3 rounded-full font-market shadow-lg hover:bg-[#9E2222] active:scale-95 transition-all uppercase tracking-widest text-sm md:text-base">
                 Kembali
               </button>
@@ -191,4 +237,8 @@ const close = () => {
 
 .modal-enter-active .modal-card, .modal-leave-active .modal-card { transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .modal-enter-from .modal-card, .modal-leave-to .modal-card { transform: scale(0.9) translateY(30px); opacity: 0; }
+
+/* Animasi Fade untuk Dropdown */
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(-10px); }
 </style>

@@ -45,8 +45,6 @@ const footerLinks = [
             Newsletter
           </h2>
 
-          
-
           <div class="flex gap-4">
             <a 
               href="https://www.instagram.com/yummix.fnd/" 

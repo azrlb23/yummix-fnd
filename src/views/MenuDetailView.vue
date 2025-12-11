@@ -10,10 +10,8 @@ const route = useRoute()
 const router = useRouter()
 const menuStore = useMenuStore()
 
-// Ambil ID dari URL
 const itemId = route.params.id
 
-// Cari item di store
 const item = computed(() => menuStore.getItemById(itemId))
 
 const goBack = () => router.push('/menu')
