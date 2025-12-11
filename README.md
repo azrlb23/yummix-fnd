@@ -41,6 +41,7 @@ Proyek ini dibangun menggunakan arsitektur modern untuk memastikan performa, ska
     * Mendukung *Nested Routes* (Layout Admin vs Layout Customer).
     * Implementasi *Dynamic Routing* (misal: `/menu/:id` untuk detail produk).
     * *Navigation Guards* untuk membatasi akses halaman Admin.
+    * * `/about untuk routing baru
 * **Vue Directives:** Penggunaan ekstensif direktif Vue untuk manipulasi DOM yang efisien:
     * `v-if`, `v-show`, `v-for`: Logika rendering kondisional dan list.
     * `v-model`: Two-way data binding pada form input.
