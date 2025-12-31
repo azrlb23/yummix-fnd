@@ -1,7 +1,11 @@
 <script setup>
+// Data Skill (Bisa diubah sesuai keahlian)
+const skills = [
+  { title: 'Vue.js', icon: '🟢', desc: 'Frontend Framework' },
+  { title: 'Tailwind', icon: '🎨', desc: 'Utility-First CSS' },
+  { title: 'UI/UX', icon: '✨', desc: 'Designing Experience' }
+]
 </script>
-
-
 
 <template>
   <div class="w-full flex justify-center items-center py-12 px-6 md:px-16 lg:px-24">
@@ -51,6 +55,7 @@
         
         <div class="w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full overflow-hidden border-[8px] border-white shadow-2xl relative z-10">
           <img 
+            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
             alt="Profile Photo" 
             class="w-full h-full object-cover"
           >
