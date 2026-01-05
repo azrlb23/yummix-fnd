@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useCartStore } from '@/stores/cart'
 import { useMenuStore } from '@/stores/menu'
 
@@ -25,6 +25,10 @@ const subCategories = computed(() => {
 const filteredCarouselItems = computed(() => {
   if (activeSubFilter.value === 'ALL') return currentItems.value
   return currentItems.value.filter(item => item.type === activeSubFilter.value)
+})
+
+onMounted(() => {
+  menuStore.fetchMenu()
 })
 
 watch(activeCategory, () => {

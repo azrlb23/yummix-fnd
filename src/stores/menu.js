@@ -1,157 +1,153 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-
-import noodlesImg from '@/assets/Noodles.png'
-import kebabImg from '@/assets/Kebab.png'
-import toastImg from '@/assets/Toast.png'
-import squashImg from '@/assets/Squash.png'
-import nonCoffeeImg from '@/assets/Non-Coffee.png'
+import { supabase } from '@/lib/supabase'
 
 export const useMenuStore = defineStore('menu', () => {
-  const items = ref([
-    { 
-      id: 1, 
-      name: 'Spicy Noodles', 
-      price: 15000, 
-      category: 'FOOD', 
-      type: 'NOODLES', 
-      img: noodlesImg, 
-      status: 'Tersedia',
-      description: 'Mie goreng pedas dengan bumbu rahasia YUMMIX, dilengkapi pangsit goreng renyah.',
-      calories: '450 kkal',
-      rating: 4.8
-    },
-    { 
-      id: 2, 
-      name: 'Beef Kebab', 
-      price: 20000, 
-      category: 'FOOD', 
-      type: 'KEBAB', 
-      img: kebabImg, 
-      status: 'Tersedia',
-      description: 'Tortilla lembut membungkus daging sapi panggang premium dan sayuran segar.',
-      calories: '320 kkal',
-      rating: 4.9
-    },
-    { 
-      id: 3, 
-      name: 'Choco Toast', 
-      price: 12000, 
-      category: 'FOOD', 
-      type: 'TOAST', 
-      img: toastImg, 
-      status: 'Habis',
-      description: 'Roti panggang renyah dengan isian cokelat lumer yang melimpah.',
-      calories: '280 kkal',
-      rating: 4.7
-    },
-    { 
-      id: 4, 
-      name: 'Chicken Kebab', 
-      price: 18000, 
-      category: 'FOOD', 
-      type: 'KEBAB', 
-      img: kebabImg, 
-      status: 'Tersedia',
-      description: 'Kebab dengan isian daging ayam panggang yang gurih dan saus spesial.',
-      calories: '300 kkal',
-      rating: 4.6
-    },
-    { 
-      id: 5, 
-      name: 'Cheese Toast', 
-      price: 14000, 
-      category: 'FOOD', 
-      type: 'TOAST', 
-      img: toastImg, 
-      status: 'Tersedia',
-      description: 'Perpaduan roti panggang dan keju mozzarella yang mulur saat digigit.',
-      calories: '310 kkal',
-      rating: 4.8
-    },
-    { 
-      id: 6, 
-      name: 'Lemon Squash', 
-      price: 10000, 
-      category: 'DRINKS', 
-      type: 'SQUASH', 
-      img: squashImg, 
-      status: 'Tersedia',
-      description: 'Minuman segar dengan perasan lemon asli dan soda yang menyegarkan.',
-      calories: '120 kkal',
-      rating: 4.5
-    },
-    { 
-      id: 7, 
-      name: 'Taro Milk', 
-      price: 15000, 
-      category: 'DRINKS', 
-      type: 'NON-COFFEE', 
-      img: nonCoffeeImg, 
-      status: 'Tersedia',
-      description: 'Susu segar dengan rasa taro yang creamy dan manis pas.',
-      calories: '200 kkal',
-      rating: 4.7
-    },
-    { 
-      id: 8, 
-      name: 'Orange Squash', 
-      price: 10000, 
-      category: 'DRINKS', 
-      type: 'SQUASH', 
-      img: squashImg, 
-      status: 'Tersedia',
-      description: 'Kesegaran jeruk berpadu dengan soda dingin.',
-      calories: '130 kkal',
-      rating: 4.6
-    },
-    { 
-      id: 9, 
-      name: 'Matcha Latte', 
-      price: 18000, 
-      category: 'DRINKS', 
-      type: 'NON-COFFEE', 
-      img: nonCoffeeImg, 
-      status: 'Tersedia',
-      description: 'Latte matcha premium dengan susu yang lembut.',
-      calories: '180 kkal',
-      rating: 4.9
-    },
-    { 
-      id: 10, 
-      name: 'Berry Squash', 
-      price: 12000, 
-      category: 'DRINKS', 
-      type: 'SQUASH', 
-      img: squashImg, 
-      status: 'Tersedia',
-      description: 'Paduan berbagai jenis beri dan soda yang manis asam segar.',
-      calories: '140 kkal',
-      rating: 4.8
-    },
-  ])
+  const items = ref([])
+  const isLoading = ref(false)
 
-  function addMenu(newItem) {
-    const newId = items.value.length > 0 ? Math.max(...items.value.map(i => i.id)) + 1 : 1
-    items.value.push({ ...newItem, id: newId })
+  // --- 1. FETCH DATA DARI SUPABASE ---
+  async function fetchMenu() {
+    isLoading.value = true
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('id', { ascending: true })
+
+      if (error) throw error
+
+      // Mapping: Ubah format Database (snake_case) ke format Frontend (camelCase/Legacy)
+      // Agar 'MenuCard.vue' dan file lain tidak error
+      items.value = data.map(dbItem => ({
+        id: dbItem.id,
+        name: dbItem.name,
+        price: dbItem.price,
+        category: dbItem.category,    // 'Food' / 'Drink'
+        type: dbItem.sub_category,    // Database: sub_category -> Frontend: type
+        img: dbItem.image_url,        // Database: image_url -> Frontend: img
+        description: dbItem.description,
+        // Konversi Boolean ke String Status
+        status: dbItem.is_available ? 'Tersedia' : 'Habis',
+        // Simpan nilai asli boolean untuk keperluan edit nanti
+        is_available: dbItem.is_available 
+      }))
+
+    } catch (err) {
+      console.error('Gagal mengambil menu:', err.message)
+    } finally {
+      isLoading.value = false
+    }
   }
 
-  function updateMenu(updatedItem) {
-    const index = items.value.findIndex(i => i.id === updatedItem.id)
-    if (index !== -1) items.value[index] = updatedItem
+  // --- 2. TAMBAH MENU KE DATABASE ---
+  async function addMenu(newItem) {
+    try {
+      // newItem adalah data bersih dari MenuFormModal (sudah format DB)
+      const { data, error } = await supabase
+        .from('products')
+        .insert([newItem])
+        .select()
+
+      if (error) throw error
+
+      // Update state lokal manual (biar gak perlu fetch ulang/loading lagi)
+      if (data && data[0]) {
+        const dbItem = data[0]
+        items.value.push({
+          id: dbItem.id,
+          name: dbItem.name,
+          price: dbItem.price,
+          category: dbItem.category,
+          type: dbItem.sub_category,
+          img: dbItem.image_url,
+          description: dbItem.description,
+          status: dbItem.is_available ? 'Tersedia' : 'Habis',
+          is_available: dbItem.is_available
+        })
+      }
+      return true // Beritahu caller kalau sukses
+    } catch (err) {
+      console.error('Gagal menambah menu:', err.message)
+      throw err
+    }
   }
 
-  function deleteMenu(id) {
-    items.value = items.value.filter(i => i.id !== id)
+  // --- 3. UPDATE MENU DI DATABASE ---
+  async function updateMenu(updatedItem) {
+    try {
+      // Ambil ID dan data sisanya
+      const { id, ...updates } = updatedItem
+
+      const { data, error } = await supabase
+        .from('products')
+        .update(updates)
+        .eq('id', id)
+        .select()
+
+      if (error) throw error
+
+      // Update state lokal
+      const index = items.value.findIndex(i => i.id === id)
+      if (index !== -1 && data && data[0]) {
+        const dbItem = data[0]
+        items.value[index] = {
+          ...items.value[index], // Pertahankan data lama
+          name: dbItem.name,
+          price: dbItem.price,
+          category: dbItem.category,
+          type: dbItem.sub_category,
+          img: dbItem.image_url,
+          description: dbItem.description,
+          status: dbItem.is_available ? 'Tersedia' : 'Habis',
+          is_available: dbItem.is_available
+        }
+      }
+    } catch (err) {
+      console.error('Gagal update menu:', err.message)
+      throw err
+    }
   }
 
+  // --- 4. HAPUS MENU DARI DATABASE ---
+  async function deleteMenu(id) {
+    try {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', id)
+
+      if (error) throw error
+
+      // Hapus dari state lokal
+      items.value = items.value.filter(i => i.id !== id)
+    } catch (err) {
+      console.error('Gagal menghapus menu:', err.message)
+      throw err
+    }
+  }
+
+  // Helper (Tetap sama)
   function getItemById(id) {
     return items.value.find(i => i.id === parseInt(id))
   }
 
   function formatPrice(value) {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value)
+    return new Intl.NumberFormat('id-ID', { 
+      style: 'currency', 
+      currency: 'IDR', 
+      minimumFractionDigits: 0 
+    }).format(value)
   }
 
-  return { items, addMenu, updateMenu, deleteMenu, formatPrice, getItemById }
+  return { 
+    items, 
+    isLoading, 
+    fetchMenu, 
+    addMenu, 
+    updateMenu, 
+    deleteMenu, 
+    formatPrice, 
+    getItemById 
+  }
 })

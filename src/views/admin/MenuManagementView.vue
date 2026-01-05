@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useMenuStore } from '@/stores/menu'
 
 import MenuTable from '@/components/admin/menu/MenuTable.vue'
@@ -40,6 +40,11 @@ const handleDelete = (id) => {
     menuStore.deleteMenu(id)
   }
 }
+
+onMounted(() => {
+  menuStore.fetchMenu()
+})
+
 </script>
 
 <template>
