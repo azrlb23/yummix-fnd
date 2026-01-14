@@ -10,8 +10,8 @@ const props = defineProps({
 const emit = defineEmits(['close', 'save'])
 
 const categoryMap = {
-  Food: ['Kebab', 'Roti, Mie, Burger'],
-  Drink: ['Coffee, Squash, Milk']
+  Food: ['Kebab', 'Roti', 'Mie', 'Burger'],
+  Drink: ['Coffee', 'Squash', 'Milk']
 }
 
 const selectedFile = ref(null)
@@ -32,6 +32,8 @@ const availableSubCategories = computed(() => {
   if (!formData.value.category) return []
   return categoryMap[formData.value.category] || []
 })
+
+const isEditing = computed(() => !!props.editItem)
 
 const handleFileChange = (event) => {
   const file = event.target.files[0]
