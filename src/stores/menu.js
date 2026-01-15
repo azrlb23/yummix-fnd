@@ -6,7 +6,7 @@ export const useMenuStore = defineStore('menu', () => {
   const items = ref([])
   const isLoading = ref(false)
 
-  // --- 1. FETCH DATA DARI SUPABASE ---
+  // --- 1. FETCH DATA (Tidak Berubah) ---
   async function fetchMenu() {
     isLoading.value = true
     try {
@@ -17,20 +17,16 @@ export const useMenuStore = defineStore('menu', () => {
 
       if (error) throw error
 
-      // Mapping: Ubah format Database (snake_case) ke format Frontend (camelCase/Legacy)
-      // Agar 'MenuCard.vue' dan file lain tidak error
       items.value = data.map(dbItem => ({
         id: dbItem.id,
         name: dbItem.name,
         price: dbItem.price,
-        category: dbItem.category,    // 'Food' / 'Drink'
-        type: dbItem.sub_category,    // Database: sub_category -> Frontend: type
-        img: dbItem.image_url,        // Database: image_url -> Frontend: img
+        category: dbItem.category,
+        type: dbItem.sub_category,
+        img: dbItem.image_url,
         description: dbItem.description,
-        // Konversi Boolean ke String Status
         status: dbItem.is_available ? 'Tersedia' : 'Habis',
-        // Simpan nilai asli boolean untuk keperluan edit nanti
-        is_available: dbItem.is_available 
+        is_available: dbItem.is_available
       }))
 
     } catch (err) {
@@ -40,18 +36,32 @@ export const useMenuStore = defineStore('menu', () => {
     }
   }
 
-  // --- 2. TAMBAH MENU KE DATABASE ---
+  // --- 2. TAMBAH MENU (PERBAIKAN UTAMA DISINI) ---
   async function addMenu(newItem) {
     try {
-      // newItem adalah data bersih dari MenuFormModal (sudah format DB)
+      // ⚠️ FILTERING: Pisahkan 'status' (sampah) dari data asli
+      // 'status' dan 'id' kita buang, sisanya kita tampung di 'sisaData'
+      const { status, id, ...sisaData } = newItem
+
+      // Kita susun ulang agar 100% cocok dengan kolom Database
+      const dbPayload = {
+        name: sisaData.name,
+        price: sisaData.price,
+        category: sisaData.category,
+        sub_category: sisaData.sub_category || sisaData.type,
+        description: sisaData.description,
+        image_url: sisaData.image_url || sisaData.img,
+        is_available: sisaData.is_available // Gunakan boolean, bukan string 'status'
+      }
+
       const { data, error } = await supabase
         .from('products')
-        .insert([newItem])
+        .insert([dbPayload]) // Kirim data yang sudah bersih
         .select()
 
       if (error) throw error
 
-      // Update state lokal manual (biar gak perlu fetch ulang/loading lagi)
+      // Update state lokal
       if (data && data[0]) {
         const dbItem = data[0]
         items.value.push({
@@ -66,22 +76,32 @@ export const useMenuStore = defineStore('menu', () => {
           is_available: dbItem.is_available
         })
       }
-      return true // Beritahu caller kalau sukses
+      return true
     } catch (err) {
       console.error('Gagal menambah menu:', err.message)
       throw err
     }
   }
 
-  // --- 3. UPDATE MENU DI DATABASE ---
+  // --- 3. UPDATE MENU (PERBAIKAN JUGA DISINI) ---
   async function updateMenu(updatedItem) {
     try {
-      // Ambil ID dan data sisanya
-      const { id, ...updates } = updatedItem
+      // Sama seperti addMenu, kita buang 'status'
+      const { id, status, ...sisaData } = updatedItem
+
+      const dbPayload = {
+        name: sisaData.name,
+        price: sisaData.price,
+        category: sisaData.category,
+        sub_category: sisaData.sub_category || sisaData.type,
+        description: sisaData.description,
+        image_url: sisaData.image_url || sisaData.img,
+        is_available: sisaData.is_available
+      }
 
       const { data, error } = await supabase
         .from('products')
-        .update(updates)
+        .update(dbPayload)
         .eq('id', id)
         .select()
 
@@ -92,7 +112,7 @@ export const useMenuStore = defineStore('menu', () => {
       if (index !== -1 && data && data[0]) {
         const dbItem = data[0]
         items.value[index] = {
-          ...items.value[index], // Pertahankan data lama
+          ...items.value[index],
           name: dbItem.name,
           price: dbItem.price,
           category: dbItem.category,
@@ -109,7 +129,7 @@ export const useMenuStore = defineStore('menu', () => {
     }
   }
 
-  // --- 4. HAPUS MENU DARI DATABASE ---
+  // --- 4. HAPUS MENU ---
   async function deleteMenu(id) {
     try {
       const { error } = await supabase
@@ -118,8 +138,6 @@ export const useMenuStore = defineStore('menu', () => {
         .eq('id', id)
 
       if (error) throw error
-
-      // Hapus dari state lokal
       items.value = items.value.filter(i => i.id !== id)
     } catch (err) {
       console.error('Gagal menghapus menu:', err.message)
@@ -127,27 +145,13 @@ export const useMenuStore = defineStore('menu', () => {
     }
   }
 
-  // Helper (Tetap sama)
   function getItemById(id) {
     return items.value.find(i => i.id === parseInt(id))
   }
 
   function formatPrice(value) {
-    return new Intl.NumberFormat('id-ID', { 
-      style: 'currency', 
-      currency: 'IDR', 
-      minimumFractionDigits: 0 
-    }).format(value)
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value)
   }
 
-  return { 
-    items, 
-    isLoading, 
-    fetchMenu, 
-    addMenu, 
-    updateMenu, 
-    deleteMenu, 
-    formatPrice, 
-    getItemById 
-  }
+  return { items, isLoading, fetchMenu, addMenu, updateMenu, deleteMenu, formatPrice, getItemById }
 })
