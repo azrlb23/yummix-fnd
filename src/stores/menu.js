@@ -21,8 +21,10 @@ export const useMenuStore = defineStore('menu', () => {
         id: dbItem.id,
         name: dbItem.name,
         price: dbItem.price,
-        category: dbItem.category,
-        type: dbItem.sub_category,
+        
+        category: dbItem.category ? dbItem.category.toUpperCase() : '',
+        type: dbItem.sub_category ? dbItem.sub_category.toUpperCase() : '',
+        
         img: dbItem.image_url,
         description: dbItem.description,
         status: dbItem.is_available ? 'Tersedia' : 'Habis',
