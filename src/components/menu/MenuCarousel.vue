@@ -19,7 +19,7 @@ const modules = [Pagination, Navigation, EffectCoverflow]
 </script>
 
 <template>
-  <div class="w-full relative px-0 md:px-0 max-w-[1200px]">
+  <div class="w-full relative px-0 md:px-0 max-w-[1200px] min-h-[400px]">
     <swiper
       :effect="'coverflow'"
       :grabCursor="true"

@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { supabase } from '@/lib/supabase'
 
 import CustomerLayout from '@/layouts/CustomerLayout.vue'
 import AdminLayout from '@/layouts/AdminLayout.vue'
@@ -9,14 +8,14 @@ import MenuDetailView from '../views/MenuDetailView.vue'
 import AdminDashboard from '@/views/admin/DashboardView.vue'
 import MenuManagementView from '@/views/admin/MenuManagementView.vue'
 import OrderManagementView from '@/views/admin/OrderManagementView.vue'
-import LoginView from '@/views/admin/LoginView.vue' 
+import LoginView from '@/views/admin/LoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      component: CustomerLayout, 
+      component: CustomerLayout,
       children: [
         { path: '', name: 'home', component: HomeView },
         { path: 'menu', name: 'menu', component: MenuView },
@@ -31,7 +30,7 @@ const router = createRouter({
     {
       path: '/admin',
       component: AdminLayout,
-      meta: { requiresAuth: true }, 
+      meta: { requiresAuth: true },
       children: [
         { path: '', name: 'admin-dashboard', component: AdminDashboard },
         { path: 'menu', name: 'admin-menu', component: MenuManagementView },
@@ -39,7 +38,7 @@ const router = createRouter({
       ]
     },
   ],
-  
+
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) return savedPosition
     if (to.hash) return { el: to.hash, behavior: 'smooth', top: 0 }
@@ -48,7 +47,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const { data: { session } } = await supabase.auth.getSession()
+  const session = localStorage.getItem('yummix_mock_session')
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   if (requiresAuth && !session) {
     next('/admin/login')

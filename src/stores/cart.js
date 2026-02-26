@@ -2,58 +2,74 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useCartStore = defineStore('cart', () => {
-  const items = ref([])
-  
-  const isCheckoutOpen = ref(false)
+  const cartItems = ref([])
+  const isProcessing = ref(false)
 
-  const totalItems = computed(() => {
-    return items.value.reduce((total, item) => total + item.quantity, 0)
+  const totalPrice = computed(() => {
+    return cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
   })
 
-  const subtotalPrice = computed(() => {
-    return items.value.reduce((total, item) => {
-      const price = Number(item.price) || 0
-      return total + (price * item.quantity)
-    }, 0)
-  })
+  async function checkout(customerData) {
+    isProcessing.value = true
+    try {
+      // Simulate network process
+      await new Promise(resolve => setTimeout(resolve, 1500))
 
-  function addItem(product) {
-    const existingItem = items.value.find((item) => item.id === product.id)
-    
-    if (existingItem) {
-      existingItem.quantity++
-    } else {
-      items.value.push({ ...product, quantity: 1, note: '' })
+      // Simulate sending order to orderStore
+      import('./order.js').then(({ useOrderStore }) => {
+        const orderStore = useOrderStore()
+        orderStore.addOrderLocally({
+          customer_name: customerData.name,
+          customer_whatsapp: customerData.whatsapp,
+          payment_method: customerData.paymentMethod,
+          total_price: totalPrice.value,
+          status: 'Pending',
+          items: cartItems.value.map(item => ({
+            id: item.id,
+            name: item.name,
+            qty: item.quantity,
+            price: item.price
+          }))
+        })
+      })
+
+      cartItems.value = []
+      return true
+    } catch (err) {
+      console.error('Checkout error:', err)
+      return false
+    } finally {
+      isProcessing.value = false
     }
   }
 
-  function decreaseItem(productId) {
-    const index = items.value.findIndex((item) => item.id === productId)
-    if (index !== -1) {
-      if (items.value[index].quantity > 1) {
-        items.value[index].quantity--
+  function addItem(product) {
+    const existing = cartItems.value.find(i => i.id === product.id)
+    if (existing) {
+      existing.quantity++
+    } else {
+      cartItems.value.push({ ...product, quantity: 1 })
+    }
+  }
+
+  function decreaseItem(id) {
+    const existingIndex = cartItems.value.findIndex(i => i.id === id)
+    if (existingIndex !== -1) {
+      if (cartItems.value[existingIndex].quantity > 1) {
+        cartItems.value[existingIndex].quantity--
       } else {
-        items.value.splice(index, 1)
+        cartItems.value.splice(existingIndex, 1)
       }
     }
   }
 
   function clearCart() {
-    items.value = []
+    cartItems.value = []
   }
 
-  function toggleCheckout() {
-    isCheckoutOpen.value = !isCheckoutOpen.value
+  function formatPrice(value) {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value)
   }
 
-  return { 
-    items, 
-    totalItems, 
-    subtotalPrice, 
-    addItem, 
-    decreaseItem, 
-    clearCart,
-    isCheckoutOpen,
-    toggleCheckout
-  }
+  return { cartItems, totalPrice, isProcessing, checkout, addItem, decreaseItem, clearCart, formatPrice }
 })

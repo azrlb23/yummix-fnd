@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { supabase } from '@/lib/supabase'
 
 const router = useRouter()
 const email = ref('')
@@ -15,12 +14,10 @@ const handleLogin = async () => {
   errorMsg.value = ''
 
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.value,
-      password: password.value,
-    })
-
-    if (error) throw error
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800))
+    // Accept any input for portfolio showcase
+    localStorage.setItem('yummix_mock_session', 'true')
     router.push('/admin') 
     
   } catch (err) {

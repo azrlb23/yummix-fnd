@@ -21,9 +21,9 @@ defineEmits(['update:modelValue'])
       FOOD
     </button>
     <button 
-      @click="$emit('update:modelValue', 'DRINKS')"
+      @click="$emit('update:modelValue', 'DRINK')"
       class="flex-1 h-full rounded-full font-market text-sm md:text-base tracking-widest transition-all duration-300 z-10"
-      :class="modelValue === 'DRINKS' 
+      :class="modelValue === 'DRINK' 
         ? 'bg-white text-[#C62E2E] shadow-md' 
         : 'text-white hover:text-white/80'"
     >

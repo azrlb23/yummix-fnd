@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, computed } from 'vue'
+import { computed } from 'vue'
 import { useCartStore } from '@/stores/cart'
 import { useMenuStore } from '@/stores/menu'
 import { useToastStore } from '@/stores/toast'
@@ -13,7 +13,7 @@ const menuStore = useMenuStore()
 const toastStore = useToastStore()
 
 const itemQuantity = computed(() => {
-  const found = cartStore.items.find(i => i.id === props.item.id)
+  const found = cartStore.cartItems.find(i => i.id === props.item.id)
   return found ? found.quantity : 0
 })
 

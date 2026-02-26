@@ -1,6 +1,5 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
-import { supabase } from '@/lib/supabase' 
 
 const props = defineProps({
   isOpen: Boolean,
@@ -64,19 +63,12 @@ const handleSubmit = async () => {
     let finalImageUrl = formData.value.image_url
 
     if (selectedFile.value) {
-      const fileName = `${Date.now()}-${selectedFile.value.name.replace(/\s/g, '-')}`
-      const { data, error } = await supabase.storage
-        .from('menu-images')
-        .upload(fileName, selectedFile.value)
-      
-      if (error) throw error
-
-      const { data: urlData } = supabase.storage
-        .from('menu-images')
-        .getPublicUrl(fileName)
-        
-      finalImageUrl = urlData.publicUrl
+      // Create local blob URL for immediate preview (lost on refresh, but good for portfolio)
+      finalImageUrl = URL.createObjectURL(selectedFile.value)
     }
+
+    // Simulate small delay
+    await new Promise(resolve => setTimeout(resolve, 500))
 
     emit('save', { 
       ...formData.value,

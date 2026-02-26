@@ -39,12 +39,12 @@ const closeMenu = () => {
       </RouterLink>
     </div>
 
-    <div class="hidden xl:flex items-center gap-10 absolute left-1/2 transform -translate-x-1/2">
+    <div class="hidden xl:flex items-center gap-10 absolute left-1/2 transform -translate-x-1/2 pointer-events-none">
       <RouterLink
         v-for="link in navLinks"
         :key="link.name"
         :to="link.path"
-        class="font-bold text-sm tracking-wide transition-colors text-xl"
+        class="font-bold text-sm tracking-wide transition-colors text-xl pointer-events-auto"
         :class="link.active ? 'text-[#FFB300]' : 'text-[#BF360C] hover:text-[#FFB300]'"
       >
         {{ link.name }}

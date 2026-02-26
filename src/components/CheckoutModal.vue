@@ -38,7 +38,7 @@ const qrCodeUrl = computed(() => {
 })
 
 const toPayment = () => {
-  if (cartStore.items.length > 0) step.value = 2
+  if (cartStore.cartItems.length > 0) step.value = 2
 }
 
 const selectPayment = (method) => {
@@ -47,9 +47,20 @@ const selectPayment = (method) => {
 }
 
 const doPayment = () => {
-  // Kirim data lengkap ke history pesanan
-  // Kita bisa menambahkan info payment method ke order store jika perlu
-  orderStore.createOrder(cartStore.items, totalPrice.value)
+  // Kirim data lengkap ke history pesanan secara lokal
+  orderStore.addOrderLocally({
+    customer_name: 'Guest (Walk-in)',
+    customer_whatsapp: '-',
+    payment_method: selectedPayment.value.name,
+    total_price: totalPrice.value,
+    status: 'Pending',
+    items: cartStore.cartItems.map(item => ({
+      id: item.id,
+      name: item.name,
+      qty: item.quantity,
+      price: item.price
+    }))
+  })
   
   step.value = 3
   setTimeout(() => cartStore.clearCart(), 500)
@@ -67,10 +78,9 @@ const close = () => {
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      
       <div 
         v-if="isOpen" 
-        class="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 transition-opacity" 
+        class="fixed inset-0 z-[9990] flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm p-4 transition-opacity" 
         @click.self="close"
       >
         
@@ -98,11 +108,11 @@ const close = () => {
 
             <div v-if="step === 1" class="flex flex-col lg:flex-row gap-6 md:gap-8 h-full">
               <div class="flex-1 space-y-3 md:space-y-4">
-                <div v-if="cartStore.items.length === 0" class="text-center py-10 md:py-20 opacity-50 font-market text-lg md:text-xl">
+                <div v-if="cartStore.cartItems.length === 0" class="text-center py-10 md:py-20 opacity-50 font-market text-lg md:text-xl">
                   Keranjang masih kosong.
                 </div>
                 
-                <div v-for="item in cartStore.items" :key="item.id" class="bg-[#F2F0E4] p-3 md:p-4 rounded-xl flex flex-col gap-3 shadow-sm border border-[#3E2723]/5">
+                <div v-for="item in cartStore.cartItems" :key="item.id" class="bg-[#F2F0E4] p-3 md:p-4 rounded-xl flex flex-col gap-3 shadow-sm border border-[#3E2723]/5">
                   <div class="flex items-center gap-3 md:gap-4 w-full">
                     <div class="flex-shrink-0 bg-white p-1 rounded-lg h-fit">
                       <img :src="item.img" class="w-16 h-16 md:w-20 md:h-20 object-contain" />
@@ -129,7 +139,7 @@ const close = () => {
                 </div>
               </div>
 
-              <div v-if="cartStore.items.length > 0" class="lg:w-[320px] bg-white p-5 md:p-6 rounded-xl shadow-sm h-fit border border-[#3E2723]/5 text-left space-y-3 md:space-y-4 flex-shrink-0">
+              <div v-if="cartStore.cartItems.length > 0" class="lg:w-[320px] bg-white p-5 md:p-6 rounded-xl shadow-sm h-fit border border-[#3E2723]/5 text-left space-y-3 md:space-y-4 flex-shrink-0">
                  <div class="space-y-2 pb-4 border-b border-dashed border-[#3E2723]/30 text-sm md:text-base">
                    <div class="flex justify-between font-market text-[#5D4037]"><span>TOTAL ITEMS</span><span>{{ cartStore.totalItems }}</span></div>
                    <div class="flex justify-between font-market text-[#5D4037]"><span>SUBTOTAL</span><span>{{ formatRupiah(cartStore.subtotalPrice) }}</span></div>

@@ -48,7 +48,7 @@ watch(activeCategory, () => {
 
       <MenuCarousel :items="filteredCarouselItems" />
 
-      <div class="mt-6 md:mt-8 flex flex-col items-center gap-6 relative z-10">
+      <div class="mt-6 md:mt-8 flex flex-col items-center gap-6 relative z-50">
         <CategoryToggle v-model="activeCategory" />
         <div>
           <button 

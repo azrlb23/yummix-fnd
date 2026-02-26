@@ -1,6 +1,5 @@
 <script setup>
 import { RouterLink, useRouter } from 'vue-router'
-import { supabase } from '@/lib/supabase' // <--- 1. Import Supabase
 
 defineProps({
   isOpen: Boolean
@@ -19,16 +18,9 @@ const adminLinks = [
 // 3. Fungsi Logika Logout (Cabut Kunci)
 const handleLogout = async () => {
   try {
-    // Hapus sesi di server & local storage
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
-
-    // Tutup sidebar (jika di mobile)
+    localStorage.removeItem('yummix_mock_session')
     emit('close')
-
-    // Tendang ke halaman login (bukan home, biar jelas sudah keluar)
     router.replace('/admin/login') 
-    
   } catch (error) {
     console.error('Logout error:', error.message)
     alert('Gagal logout!')
